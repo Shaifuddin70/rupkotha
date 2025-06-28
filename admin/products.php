@@ -60,7 +60,7 @@ $products = $pdo->query("SELECT products.*, categories.name AS category_name
 <h2 class="page-title">Manage Products</h2>
 
 <!-- Add Product Form -->
-<div class="card mb-4">
+<div class="card mb-4 p-4">
     <form method="post" enctype="multipart/form-data" class="row g-3">
         <div class="col-md-4">
             <label>Name</label>
@@ -103,7 +103,7 @@ $products = $pdo->query("SELECT products.*, categories.name AS category_name
  </div>
 
     <!-- Product Table -->
-<div class="card">
+<div class="card p-4">
     <h4>Product List</h4>
     <table class="table table-bordered table-hover mt-3 align-middle">
         <thead class="table">

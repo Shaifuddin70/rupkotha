@@ -300,10 +300,9 @@ body.dark-theme .theme-toggle-indicator {
 }
 
 .main-content .card {
-  border-radius: 8px;
-  padding: 20px;
   background-color: var(--color-bg-sidebar);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 /* Responsive media query code for small screens */

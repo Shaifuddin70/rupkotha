@@ -69,3 +69,21 @@ td > img{
     height: 70px;
     object-fit: cover;
 }
+
+
+.list-group-item{
+    color: var(--color-text-primary)!important;
+    background-color: var(--color-bg-sidebar)!important;
+}
+
+@media (min-width: 768px) {
+    .count-md-2 {
+        -webkit-column-count:2!important;
+        column-count: 2!important;
+    }
+
+    .count-md-3 {
+        -webkit-column-count: 3!important;
+        column-count: 3!important;
+    }
+}
