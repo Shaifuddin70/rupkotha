@@ -1,8 +1,4 @@
-<?php
-// hero_table_partial.php
-// This file is included by hero-slider.php for both initial load and AJAX requests.
-// It assumes $heroItems, $totalPages, $page, $limit, $products, $totalHeroItems are already defined.
-?>
+
 <table class="table table-bordered align-middle">
     <thead>
     <tr>

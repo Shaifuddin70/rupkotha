@@ -12,7 +12,7 @@ $heroProducts = $heroProducts ? $heroProducts->fetchAll() : [];
 <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
         <?php foreach ($heroProducts as $index => $item): ?>
-            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>" style="background: url('assets/uploads/<?= $item['image'] ?>') center/cover no-repeat; height: 400px; position: relative;">
+            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>" style="background: url('admin/assets/uploads/<?= $item['image'] ?>') center/cover no-repeat; height: 400px; position: relative;">
                 <div class="overlay position-absolute w-100 h-100" style="background-color: rgba(0, 0, 0, 0.5);"></div>
                 <div class="container position-relative z-1 text-white text-center d-flex flex-column justify-content-center align-items-center h-100">
                     <h2 class="display-5 fw-bold"><?= htmlspecialchars($item['title']) ?></h2>
