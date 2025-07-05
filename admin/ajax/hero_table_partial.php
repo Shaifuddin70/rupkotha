@@ -28,7 +28,7 @@
                 <td><?= htmlspecialchars($item['product_name']) ?></td>
                 <td><?= $item['is_active'] ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>' ?></td>
                 <td>
-                    <form method="post" class="d-inline" name="delete-form"> <!-- Added name="delete-form" -->
+                    <form method="post" class="d-inline" name="delete-form">
                         <input type="hidden" name="id" value="<?= $item['id'] ?>">
                         <button name="delete" class="btn btn-danger btn-sm">Delete</button>
                     </form>

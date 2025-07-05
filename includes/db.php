@@ -1,4 +1,5 @@
 <?php
+
 global $pdo;
 $host = 'localhost';
 $db = 'rpecommerce';

@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../includes/db.php';
 require_once 'includes/auth.php'; // checks if admin is logged in
 ?>
@@ -12,6 +13,7 @@ require_once 'includes/auth.php'; // checks if admin is logged in
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
     <!-- Bootstrap JS Bundle with Popper -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">

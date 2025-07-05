@@ -87,3 +87,7 @@ td > img{
         column-count: 3!important;
     }
 }
+
+.modal-content{
+    background-color: var(--color-bg-sidebar)!important;
+}
