@@ -32,12 +32,12 @@ $per_page = 8; // 8 products per page
 $offset = ($page - 1) * $per_page;
 
 // Get total number of products for pagination calculation
-$total_products = $pdo->query("SELECT COUNT(id) FROM products")->fetchColumn();
+$total_products = $pdo->query("SELECT COUNT(id) FROM products WHERE is_active = 1")->fetchColumn();
 $total_pages = ceil($total_products / $per_page);
 
 // Fetch the products for the current page (SELECT * already includes stock)
 $products_stmt = $pdo->prepare(
-    "SELECT * FROM products ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+    "SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
 );
 $products_stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
 $products_stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -46,37 +46,6 @@ $products = $products_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
-<!-- Custom CSS for Product Cards -->
-<style>
-    .product-card {
-        transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
-        border: 1px solid #e9ecef;
-    }
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    }
-    .product-card-img-top {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
-    .section-title {
-        position: relative;
-        padding-bottom: 15px;
-        margin-bottom: 30px;
-    }
-    .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 3px;
-        background-color: #0d6efd;
-    }
-</style>
 
 <!-- Hero Section with Slider -->
 <?php if (!empty($hero_products)): ?>

@@ -39,14 +39,14 @@ $per_page = 12; // 12 products per page
 $offset = ($page - 1) * $per_page;
 
 // Get total number of products in this category for pagination
-$total_products_stmt = $pdo->prepare("SELECT COUNT(id) FROM products WHERE category_id = :category_id");
+$total_products_stmt = $pdo->prepare("SELECT COUNT(id) FROM products WHERE category_id = :category_id AND is_active = 1");
 $total_products_stmt->execute([':category_id' => $category_id]);
 $total_products = $total_products_stmt->fetchColumn();
 $total_pages = ceil($total_products / $per_page);
 
 // Fetch the paginated products for the current category
 $products_stmt = $pdo->prepare(
-    "SELECT * FROM products WHERE category_id = :category_id ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+    "SELECT * FROM products WHERE category_id = :category_id AND is_active = 1 ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
 );
 $products_stmt->bindValue(':category_id', $category_id, PDO::PARAM_INT);
 $products_stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);

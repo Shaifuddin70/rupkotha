@@ -66,7 +66,34 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+    tableContainer.addEventListener('change', async (e) => {
+        const toggle = e.target.closest('.status-toggle');
+        if (toggle) {
+            const itemId = toggle.dataset.id;
+            const newStatus = toggle.checked ? 1 : 0;
 
+            const formData = new FormData();
+            formData.append('id', itemId);
+            formData.append('status', newStatus);
+
+            try {
+                const response = await fetch('ajax/toggle_hero_status.php', { method: 'POST', body: formData });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    // Update the badge text and color visually
+                    const badge = toggle.nextElementSibling;
+                    badge.textContent = newStatus ? 'Active' : 'Inactive';
+                    badge.classList.toggle('bg-success', newStatus === 1);
+                    badge.classList.toggle('bg-secondary', newStatus === 0);
+                } else {
+                    alert(`Error: ${result.message}`);
+                    toggle.checked = !toggle.checked; // Revert the toggle on failure
+                }
+            } catch (error) {
+                alert(`An error occurred: ${error.message}`);
+            }
+        }
+    });
     // Handle the Edit Form submission
     editForm.addEventListener('submit', async (e) => {
         e.preventDefault();

@@ -54,50 +54,7 @@ $related_products = $related_products_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <!-- Custom CSS for this page -->
 <style>
-    .product-image-main {
-        width: 100%;
-        height: auto;
-        max-height: 500px;
-        object-fit: cover;
-        border-radius: 0.5rem;
-        border: 1px solid #dee2e6;
-    }
-    .product-price {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #0d6efd;
-    }
-    .quantity-input {
-        max-width: 80px;
-    }
-    .section-title {
-        position: relative;
-        padding-bottom: 15px;
-        margin-bottom: 30px;
-    }
-    .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 80px;
-        height: 3px;
-        background-color: #0d6efd;
-    }
-    /* Re-using product card styles from homepage */
-    .product-card {
-        transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
-        border: 1px solid #e9ecef;
-    }
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    }
-    .product-card-img-top {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
+
 </style>
 
 <main class="container my-5">
