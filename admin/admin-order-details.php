@@ -69,27 +69,65 @@ foreach ($order_items as $item) {
 }
 ?>
 
-<!-- Print-Specific CSS -->
+<!-- FINAL, corrected Print-Specific CSS -->
 <style>
     @media print {
-        body * { visibility: hidden; }
-        .invoice-area, .invoice-area * { visibility: visible; }
-        .invoice-area { position: absolute; left: 0; top: 0; width: 100%; }
-        .card { box-shadow: none !important; border: 1px solid #dee2e6 !important; }
-        .no-print { display: none !important; }
+        /* Hide all elements by default */
+        body * {
+            visibility: hidden;
+        }
+
+        /* Make only the invoice area and its children visible */
+        .invoice-area, .invoice-area * {
+            visibility: visible;
+        }
+
+        /* Position the invoice at the top of the page */
+        .invoice-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        /* General print resets */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .invoice-area .card {
+            box-shadow: none !important;
+            border: 1px solid #dee2e6 !important;
+            margin: 0;
+        }
+
+        /* Ensure text is black for better printer readability */
+        .invoice-area * {
+            color: #000 !important;
+        }
+
+        /* Help Bootstrap badges print their background colors */
+        .badge {
+            -webkit-print-color-adjust: exact; /* Chrome, Safari */
+            color-adjust: exact; /* Firefox */
+            border: 1px solid #6c757d;
+        }
     }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-3 no-print">
-    <h2 class="page-title">Order Details</h2>
-    <div>
-        <a href="orders" class="btn btn-secondary">Back to Orders</a>
-        <button onclick="window.print()" class="btn btn-primary"><i class="bi bi-printer-fill me-1"></i> Print Invoice</button>
+<div class="no-print">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="page-title">Order Details</h2>
+        <div>
+            <a href="orders" class="btn btn-secondary">Back to Orders</a>
+            <button onclick="window.print()" class="btn btn-primary"><i class="bi bi-printer-fill me-1"></i> Print Invoice</button>
+        </div>
     </div>
 </div>
 
 <div class="invoice-area">
-    <div class="card">
+    <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Invoice for Order #<?= esc_html($order['id']) ?></h5>
             <span class="badge fs-6 <?=
@@ -115,7 +153,7 @@ foreach ($order_items as $item) {
                 <div class="col-md-6 text-md-end mt-3 mt-md-0">
                     <h6>Payment Details</h6>
                     <p class="mb-1"><strong>Method:</strong> <?= esc_html($order['payment_method']) ?></p>
-                    <?php if($order['payment_method'] !== 'cod'): ?>
+                    <?php if($order['payment_method'] !== 'cod' && !empty($order['payment_sender_no'])): ?>
                         <p class="mb-1"><strong>Sender No:</strong> <?= esc_html($order['payment_sender_no']) ?></p>
                         <p class="mb-0"><strong>TrxID:</strong> <?= esc_html($order['payment_trx_id']) ?></p>
                     <?php endif; ?>
@@ -125,7 +163,7 @@ foreach ($order_items as $item) {
             <h5 class="mb-3">Items Ordered</h5>
             <div class="table-responsive">
                 <table class="table table-bordered">
-                    <thead class="table-light">
+                    <thead  >
                     <tr>
                         <th>Product</th>
                         <th class="text-end">Unit Price</th>
@@ -152,30 +190,30 @@ foreach ($order_items as $item) {
                         <td colspan="3" class="text-end border-0">Shipping Fee</td>
                         <td class="text-end border-0"><?= formatPrice($order['shipping_fee']) ?></td>
                     </tr>
-                    <tr class="table-light fs-5">
+                    <tr class=" fs-5">
                         <td colspan="3" class="text-end">Grand Total</td>
                         <td class="text-end"><?= formatPrice($order['total_amount']) ?></td>
                     </tr>
                     </tfoot>
                 </table>
             </div>
-
-            <div class="card mt-4 no-print">
-                <div class="card-body">
-                    <h5 class="card-title">Update Order Status</h5>
-                    <form method="post" class="d-flex gap-2">
-                        <select name="status" class="form-select" style="max-width: 250px;">
-                            <option value="Pending" <?= $order['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                            <option value="Processing" <?= $order['status'] === 'Processing' ? 'selected' : '' ?>>Processing</option>
-                            <option value="Shipped" <?= $order['status'] === 'Shipped' ? 'selected' : '' ?>>Shipped</option>
-                            <option value="Completed" <?= $order['status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
-                            <option value="Cancelled" <?= $order['status'] === 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                        </select>
-                        <button type="submit" name="update_status" class="btn btn-success">Update Status</button>
-                    </form>
-                </div>
-            </div>
         </div>
+    </div>
+</div>
+
+<div class="card mt-4 no-print">
+    <div class="card-body">
+        <h5 class="card-title">Update Order Status</h5>
+        <form method="post" class="d-flex gap-2">
+            <select name="status" class="form-select" style="max-width: 250px;">
+                <option value="Pending" <?= $order['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                <option value="Processing" <?= $order['status'] === 'Processing' ? 'selected' : '' ?>>Processing</option>
+                <option value="Shipped" <?= $order['status'] === 'Shipped' ? 'selected' : '' ?>>Shipped</option>
+                <option value="Completed" <?= $order['status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
+                <option value="Cancelled" <?= $order['status'] === 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+            </select>
+            <button type="submit" name="update_status" class="btn btn-success">Update Status</button>
+        </form>
     </div>
 </div>
 

@@ -60,7 +60,7 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY id DESC")->fetchAll
 
 <div class="card p-4">
     <h4>Category List</h4>
-    <table class="table table-bordered table-hover mt-3 align-middle">
+    <table class="table table-bordered table-hover mt-3 align-middle table-responsive">
         <!-- Toast Container -->
         <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
             <div id="toastMessage" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">

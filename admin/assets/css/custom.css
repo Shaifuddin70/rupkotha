@@ -1,6 +1,6 @@
 body{
     background-color: var(--color-bg-sidebar)!important;
-     color: var(--color-text-primary)!important;
+    color: var(--color-text-primary)!important;
 }
 
 .top-section{
@@ -58,6 +58,10 @@ ol,
 ul {
     padding-left: 0!important;
 }
+
+table{
+    color: var(--color-text-primary)!important;
+}
 .table-light{
     background-color: var(--color-bg-sidebar)!important;
 }
@@ -93,5 +97,4 @@ td > img{
 .modal-content{
     background-color: var(--color-bg-sidebar)!important;
 }
-
 
