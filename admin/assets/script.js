@@ -3,7 +3,7 @@ const sidebar = document.querySelector(".sidebar");
 const searchForm = document.querySelector(".search-form");
 const themeToggleBtn = document.querySelector(".theme-toggle");
 const themeIcon = themeToggleBtn.querySelector(".theme-icon");
-const menuLinks = document.querySelectorAll(".menu-link");
+const menuLinks = document.querySelectorAll(".menu-link"); // Assuming this is used elsewhere
 
 // Updates the theme icon based on current theme and sidebar state
 const updateThemeIcon = () => {
@@ -26,21 +26,47 @@ themeToggleBtn.addEventListener("click", () => {
   updateThemeIcon();
 });
 
+// --- NEW/MODIFIED CODE FOR SIDEBAR PERSISTENCE ---
+
+// Function to set sidebar state
+const setSidebarState = (isCollapsed) => {
+  sidebar.classList.toggle("collapsed", isCollapsed);
+  localStorage.setItem("sidebarState", isCollapsed ? "collapsed" : "expanded");
+  updateThemeIcon(); // Update theme icon after sidebar state changes
+};
+
+// Load sidebar state on page load
+const savedSidebarState = localStorage.getItem("sidebarState");
+
+if (savedSidebarState === "collapsed") {
+  // If saved state is collapsed, apply it
+  setSidebarState(true);
+} else if (savedSidebarState === "expanded") {
+  // If saved state is expanded, apply it
+  setSidebarState(false);
+} else {
+  // No saved state, apply default based on screen size (original logic)
+  if (window.innerWidth > 768) {
+    setSidebarState(false); // Expanded by default on large screens
+  } else {
+    setSidebarState(true); // Collapsed by default on small screens
+  }
+}
+
 // Toggle sidebar collapsed state on buttons click
 sidebarToggleBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
-    sidebar.classList.toggle("collapsed");
-    updateThemeIcon();
+    // Toggle the state and save it
+    const isCurrentlyCollapsed = sidebar.classList.contains("collapsed");
+    setSidebarState(!isCurrentlyCollapsed);
   });
 });
 
 // Expand the sidebar when the search form is clicked
 searchForm.addEventListener("click", () => {
   if (sidebar.classList.contains("collapsed")) {
-    sidebar.classList.remove("collapsed");
+    setSidebarState(false); // Expand and save state
     searchForm.querySelector("input").focus();
   }
 });
 
-// Expand sidebar by default on large screens
-if (window.innerWidth > 768) sidebar.classList.remove("collapsed");

@@ -1,0 +1,109 @@
+.header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}
+.navbar-brand img {
+    max-height: 50px;
+}
+.search-form {
+    width: 100%;
+    max-width: 500px;
+}
+.nav-link .badge {
+    position: absolute;
+    top: 0px;
+    right: -5px;
+    font-size: 0.6em;
+}
+.category-nav {
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+}
+.category-nav .nav-link {
+    color: #343a40;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+}
+.category-nav .nav-link:hover {
+    color: #0d6efd;
+}
+.dropdown-menu {
+    border-radius: 0.5rem;
+    border-top: 2px solid #0d6efd;
+}
+
+.footer-category p{
+    margin-bottom: 0!important;
+}
+.footer-category p a{
+    text-decoration: none;
+}
+.links p{
+    margin-bottom: 0!important;
+}
+.links a{
+    text-decoration: none;
+}
+
+.register-body {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+}
+.register-card {
+
+    width: 100%;
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+.login-body {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+    display: flex;
+    align-items: center;
+    min-height: 80vh;
+}
+.login-card {
+
+    width: 100%;
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+
+
+@media print {
+    /* Hide everything except the main invoice area */
+    body * {
+        visibility: hidden;
+    }
+    .invoice-area, .invoice-area * {
+        visibility: visible;
+    }
+    /* Position the invoice area at the top of the page */
+    .invoice-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    /* Remove shadows and borders for a cleaner print */
+    .card {
+        box-shadow: none !important;
+        border: none !important;
+    }
+    /* Ensure text is black for printing */
+    .card-body, .card-body * {
+        color: #000 !important;
+    }
+    /* Ensure backgrounds are white */
+    .card-header.bg-light, .table thead .bg-light {
+        background-color: #fff !important;
+        -webkit-print-color-adjust: exact; /* For Chrome */
+        color-adjust: exact; /* For Firefox */
+    }
+}

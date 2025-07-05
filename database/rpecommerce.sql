@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 28, 2025 at 04:03 PM
+-- Generation Time: Jul 05, 2025 at 04:04 PM
 -- Server version: 5.7.24
 -- PHP Version: 8.3.1
 
@@ -39,7 +39,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `username`, `email`, `password`) VALUES
-(2, 'Shaifuddin Ahammed Rokib', 'admin@gmail.com', '$2y$10$JLlfSjU8JiL//lrLBqSYVuoZPrL/Pv1CyIVKJBP7/ffin5SBP2XHm');
+(2, 'ROKIB', 'admin@gmail.com', '$2y$10$JLlfSjU8JiL//lrLBqSYVuoZPrL/Pv1CyIVKJBP7/ffin5SBP2XHm');
 
 -- --------------------------------------------------------
 
@@ -74,7 +74,10 @@ CREATE TABLE `categories` (
 INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`) VALUES
 (8, 'HOME COOKED', '2025-06-27 20:53:06', '2025-06-27 20:53:06'),
 (11, 'Furniture', '2025-06-27 20:53:06', '2025-06-27 20:53:06'),
-(16, 'Shaifuddin Ahammed Rokib', '2025-06-27 21:31:29', '2025-06-27 21:31:29');
+(16, 'Shaifuddin Ahammed Rokib', '2025-06-27 21:31:29', '2025-06-27 21:31:29'),
+(21, 'daw', '2025-07-05 06:53:52', '2025-07-05 06:53:52'),
+(22, 'dawawd', '2025-07-05 06:54:52', '2025-07-05 06:54:52'),
+(23, 'dawawdad', '2025-07-05 06:54:53', '2025-07-05 06:54:53');
 
 -- --------------------------------------------------------
 
@@ -89,15 +92,23 @@ CREATE TABLE `hero_products` (
   `subtitle` varchar(255) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `hero_products`
 --
 
-INSERT INTO `hero_products` (`id`, `product_id`, `title`, `subtitle`, `image`, `is_active`, `created_at`) VALUES
-(1, 6, 'Burgerwad', 'awdawd', '685fba43a174c_logo.jpg', 0, '2025-06-28 09:47:47');
+INSERT INTO `hero_products` (`id`, `product_id`, `title`, `subtitle`, `image`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 6, 'Burgerwad', 'awdawd', '685fbf4df3faa_IMG-20250619-WA0049.jpg', 1, '2025-06-28 09:47:47', NULL),
+(14, 6, 'dad', 'awdawd', '6868c325ee986bb4fbc0c26dac8a0.jpg', 1, '2025-07-05 06:16:05', NULL),
+(15, 8, 'awd', 'awd', '6868cd3d91831ccb0793aabb3c5e5.jpg', 1, '2025-07-05 06:59:09', NULL),
+(16, 8, 'awd', 'awd', '6868cd432d96c81789f6227b7ca53.jpg', 1, '2025-07-05 06:59:15', NULL),
+(17, 8, 'awd', 'awd', '6868cd4969cbfe0842087b6c9d9a7.jpg', 1, '2025-07-05 06:59:21', NULL),
+(18, 6, 'awd', 'awd', '6868cd51c6ca705fda83303f17ae5.jpg', 1, '2025-07-05 06:59:29', NULL),
+(20, 10, 'awd', 'awd', 'bb8abef6a23147f83c90aba6.jpg', 1, '2025-07-05 07:40:15', NULL),
+(21, 9, 'Update', 'Hello word', 'f754b4239485c68d6194ac29.jpg', 1, '2025-07-05 07:40:29', '2025-07-05 13:51:33');
 
 -- --------------------------------------------------------
 
@@ -110,8 +121,20 @@ CREATE TABLE `orders` (
   `user_id` int(11) DEFAULT NULL,
   `total_amount` decimal(10,2) DEFAULT NULL,
   `status` varchar(50) DEFAULT 'Pending',
+  `payment_method` varchar(50) NOT NULL DEFAULT 'Cash on Delivery',
+  `payment_trx_id` varchar(255) DEFAULT NULL,
+  `payment_sender_no` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `payment_method`, `payment_trx_id`, `payment_sender_no`, `created_at`) VALUES
+(1, 1, '100050.00', 'Pending', 'Cash on Delivery', NULL, NULL, '2025-07-05 09:08:22'),
+(2, 1, '402147.00', 'Pending', 'Cash on Delivery', NULL, NULL, '2025-07-05 09:10:21'),
+(3, 1, '449984.00', 'Pending', 'Cash on Delivery', NULL, NULL, '2025-07-05 09:46:10');
 
 -- --------------------------------------------------------
 
@@ -126,6 +149,17 @@ CREATE TABLE `order_items` (
   `quantity` int(11) DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price`) VALUES
+(1, 1, 6, 1, '100000.00'),
+(2, 2, 6, 4, '100000.00'),
+(3, 2, 10, 3, '699.00'),
+(4, 3, 6, 4, '100000.00'),
+(5, 3, 9, 1, '49934.00');
 
 -- --------------------------------------------------------
 
@@ -150,8 +184,10 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `category_id`, `name`, `description`, `image`, `price`, `created_at`, `stock`, `updated_at`) VALUES
-(6, 11, 'Shaifuddin Ahammed Rokib', 'test', '685f0916ad605_IMG-20250619-WA0049.jpg', '1.00', '2025-06-27 21:39:19', 5, '2025-06-27 21:39:19'),
-(7, 8, 'Chicken Burger', 'test', '685f0fd874a36_FB_IMG_1618914383053~2.jpg', '19999.00', '2025-06-27 21:40:40', 10, '2025-06-27 21:40:40');
+(6, 11, 'Shaifuddin Ahammed Rokib', 'test', '685f0916ad605_IMG-20250619-WA0049.jpg', '100000.00', '2025-07-05 09:46:10', 4, '2025-07-05 09:46:10'),
+(8, 8, 'Chicken Burger', 'Salary', '6868c25dddead19fd9202d6f487d4.jpg', '1200.00', '2025-07-05 06:14:09', 55, '2025-07-05 06:14:09'),
+(9, 8, 'HOME COOKED', 'Salary', '7adad8a6386ebc467132378d.jpg', '49934.00', '2025-07-05 09:46:10', 54, '2025-07-05 09:46:10'),
+(10, 22, 'dawawdad', 'Google authenticator', 'b674c078f1354a8d83da3555.jpg', '699.00', '2025-07-05 09:10:21', 96, '2025-07-05 09:10:21');
 
 -- --------------------------------------------------------
 
@@ -169,6 +205,11 @@ CREATE TABLE `settings` (
   `facebook` varchar(255) DEFAULT NULL,
   `instagram` varchar(255) DEFAULT NULL,
   `twitter` varchar(255) DEFAULT NULL,
+  `shipping_fee_dhaka` decimal(10,2) NOT NULL DEFAULT '60.00',
+  `shipping_fee_outside` decimal(10,2) NOT NULL DEFAULT '120.00',
+  `bkash_number` varchar(20) DEFAULT NULL,
+  `nagad_number` varchar(20) DEFAULT NULL,
+  `rocket_number` varchar(20) DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -176,34 +217,8 @@ CREATE TABLE `settings` (
 -- Dumping data for table `settings`
 --
 
-INSERT INTO `settings` (`id`, `company_name`, `logo`, `phone`, `email`, `address`, `facebook`, `instagram`, `twitter`, `updated_at`) VALUES
-(1, 'Rupkotha Shop', '685fa966ad80a_logo.jpg', '0123456789', 'info@example.com', 'Dhaka, Bangladesh', 'https://www.facebook.com/', 'https://www.facebook.com/', 'https://www.facebook.com/', '2025-06-28 08:35:50');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `site_settings`
---
-
-CREATE TABLE `site_settings` (
-  `id` int(11) NOT NULL,
-  `company_name` varchar(255) DEFAULT NULL,
-  `logo` varchar(255) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `address` text,
-  `facebook` varchar(255) DEFAULT NULL,
-  `instagram` varchar(255) DEFAULT NULL,
-  `twitter` varchar(255) DEFAULT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `site_settings`
---
-
-INSERT INTO `site_settings` (`id`, `company_name`, `logo`, `phone`, `email`, `address`, `facebook`, `instagram`, `twitter`, `updated_at`) VALUES
-(1, 'Rupkotha Shop', NULL, '0123456789', 'info@example.com', 'Dhaka, Bangladesh', NULL, NULL, NULL, '2025-06-28 08:23:33');
+INSERT INTO `settings` (`id`, `company_name`, `logo`, `phone`, `email`, `address`, `facebook`, `instagram`, `twitter`, `shipping_fee_dhaka`, `shipping_fee_outside`, `bkash_number`, `nagad_number`, `rocket_number`, `updated_at`) VALUES
+(1, 'Rupkotha Properties Bangladesh', '6868c1785a7f3a3857e4927213ad2.jpg', '01234554', 'info@rpproperty.com', 'Dhaka, Bangladesh', 'https://www.facebook.com/', 'https://www.facebook.com/', 'https://www.facebook.com/', '60.00', '120.00', '01791912323', '01812345678', '01538347152', '2025-07-05 10:02:00');
 
 -- --------------------------------------------------------
 
@@ -220,6 +235,14 @@ CREATE TABLE `users` (
   `address` text,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `phone`, `address`, `created_at`) VALUES
+(1, 'Shaifuddin Ahammed', 'shaifuddin70@gmail.com', '$2y$10$TU4FOibTfughwZ4EhnYs/uQi8VdBf9F8BtxNs2HPZWuwIyTWZz2ra', '01635485720', 'Army Society, Mazar road, Uttara, Dhaka-1230', '2025-07-05 08:49:22'),
+(2, 'rokib', 'dardentimothy3@gmail.com', '$2y$10$/byoqCnj2gUim.hMXWklIOHu20uU7p9x33X9l7owJG5nybEgg429q', '18002122120', 'Bangalore, karnataka, india', '2025-07-05 08:53:52');
 
 --
 -- Indexes for dumped tables
@@ -281,12 +304,6 @@ ALTER TABLE `settings`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `site_settings`
---
-ALTER TABLE `site_settings`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -312,31 +329,31 @@ ALTER TABLE `cart`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `hero_products`
 --
 ALTER TABLE `hero_products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -345,16 +362,10 @@ ALTER TABLE `settings`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `site_settings`
---
-ALTER TABLE `site_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

@@ -2,6 +2,9 @@
 session_start();
 require_once '../includes/db.php';
 require_once 'includes/auth.php'; // checks if admin is logged in
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 ?>
 
 <!DOCTYPE html>
@@ -10,6 +13,7 @@ require_once 'includes/auth.php'; // checks if admin is logged in
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rupkotha Properties Bangladesh</title>
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
     <!-- Bootstrap JS Bundle with Popper -->
