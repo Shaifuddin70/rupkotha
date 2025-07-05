@@ -58,7 +58,9 @@ ol,
 ul {
     padding-left: 0!important;
 }
-
+.table-light{
+    background-color: var(--color-bg-sidebar)!important;
+}
 table thead th,
 table tbody td {
     color: var(--color-text-primary);
@@ -91,8 +93,5 @@ td > img{
 .modal-content{
     background-color: var(--color-bg-sidebar)!important;
 }
-
-
-
 
 

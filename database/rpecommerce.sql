@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 05, 2025 at 04:04 PM
+-- Generation Time: Jul 05, 2025 at 04:31 PM
 -- Server version: 5.7.24
 -- PHP Version: 8.3.1
 
@@ -124,6 +124,7 @@ CREATE TABLE `orders` (
   `payment_method` varchar(50) NOT NULL DEFAULT 'Cash on Delivery',
   `payment_trx_id` varchar(255) DEFAULT NULL,
   `payment_sender_no` varchar(20) DEFAULT NULL,
+  `shipping_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -131,10 +132,12 @@ CREATE TABLE `orders` (
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `payment_method`, `payment_trx_id`, `payment_sender_no`, `created_at`) VALUES
-(1, 1, '100050.00', 'Pending', 'Cash on Delivery', NULL, NULL, '2025-07-05 09:08:22'),
-(2, 1, '402147.00', 'Pending', 'Cash on Delivery', NULL, NULL, '2025-07-05 09:10:21'),
-(3, 1, '449984.00', 'Pending', 'Cash on Delivery', NULL, NULL, '2025-07-05 09:46:10');
+INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `payment_method`, `payment_trx_id`, `payment_sender_no`, `shipping_fee`, `created_at`) VALUES
+(1, 1, '100050.00', 'Pending', 'Cash on Delivery', NULL, NULL, '0.00', '2025-07-05 09:08:22'),
+(2, 1, '402147.00', 'Completed', 'Cash on Delivery', NULL, NULL, '0.00', '2025-07-05 09:10:21'),
+(3, 1, '449984.00', 'Cancelled', 'Cash on Delivery', NULL, NULL, '0.00', '2025-07-05 09:46:10'),
+(4, 1, '400120.00', 'Pending', 'cod', '', '', '120.00', '2025-07-05 10:14:11'),
+(5, 1, '151260.00', 'Completed', 'bkash', 'awd456a46wd', '01635485720', '60.00', '2025-07-05 10:14:38');
 
 -- --------------------------------------------------------
 
@@ -159,7 +162,10 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price`) 
 (2, 2, 6, 4, '100000.00'),
 (3, 2, 10, 3, '699.00'),
 (4, 3, 6, 4, '100000.00'),
-(5, 3, 9, 1, '49934.00');
+(5, 3, 9, 1, '49934.00'),
+(6, 4, 6, 4, '100000.00'),
+(7, 5, 10, 2, '699.00'),
+(8, 5, 9, 3, '49934.00');
 
 -- --------------------------------------------------------
 
@@ -184,10 +190,10 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `category_id`, `name`, `description`, `image`, `price`, `created_at`, `stock`, `updated_at`) VALUES
-(6, 11, 'Shaifuddin Ahammed Rokib', 'test', '685f0916ad605_IMG-20250619-WA0049.jpg', '100000.00', '2025-07-05 09:46:10', 4, '2025-07-05 09:46:10'),
+(6, 11, 'Shaifuddin Ahammed Rokib', 'test', '685f0916ad605_IMG-20250619-WA0049.jpg', '100000.00', '2025-07-05 10:14:11', 0, '2025-07-05 10:14:11'),
 (8, 8, 'Chicken Burger', 'Salary', '6868c25dddead19fd9202d6f487d4.jpg', '1200.00', '2025-07-05 06:14:09', 55, '2025-07-05 06:14:09'),
-(9, 8, 'HOME COOKED', 'Salary', '7adad8a6386ebc467132378d.jpg', '49934.00', '2025-07-05 09:46:10', 54, '2025-07-05 09:46:10'),
-(10, 22, 'dawawdad', 'Google authenticator', 'b674c078f1354a8d83da3555.jpg', '699.00', '2025-07-05 09:10:21', 96, '2025-07-05 09:10:21');
+(9, 8, 'HOME COOKED', 'Salary', '7adad8a6386ebc467132378d.jpg', '49934.00', '2025-07-05 10:14:38', 51, '2025-07-05 10:14:38'),
+(10, 22, 'dawawdad', 'Google authenticator', 'b674c078f1354a8d83da3555.jpg', '699.00', '2025-07-05 10:14:38', 94, '2025-07-05 10:14:38');
 
 -- --------------------------------------------------------
 
@@ -341,13 +347,13 @@ ALTER TABLE `hero_products`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `products`
