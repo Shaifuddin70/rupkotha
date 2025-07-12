@@ -1,12 +1,12 @@
 <?php
-// admin/ajax/delete-category.php
-require_once __DIR__ . '/../includes/db.php';
+session_start();
+require_once '../includes/db.php';
+require_once '../includes/functions.php';
 
 header('Content-Type: application/json');
 
-session_start();
-if (!isset($_SESSION['admin_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+if (!isAdmin()) {
+    echo json_encode(['status' => 'error', 'message' => 'Authentication required.']);
     exit;
 }
 
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                 if ($delete_stmt->execute([$id])) {
                     $response = ['status' => 'success', 'message' => 'Category deleted successfully!'];
                 } else {
-                    $response['message'] = 'Failed to delete category from database.';
+                    $response['message'] = 'Failed to delete category from the database.';
                 }
             }
         } catch (PDOException $e) {

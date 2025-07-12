@@ -55,29 +55,6 @@ $products_stmt->execute();
 $products = $products_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
-
-<!-- Re-using styles from other pages for consistency -->
-<style>
-    .product-card {
-        transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
-        border: 1px solid #e9ecef;
-    }
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    }
-    .product-card-img-top {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
-    .page-header {
-        background-color: #f8f9fa;
-        padding: 2rem 0;
-        margin-bottom: 3rem;
-    }
-</style>
-
 <div class="page-header">
     <div class="container">
         <nav aria-label="breadcrumb">

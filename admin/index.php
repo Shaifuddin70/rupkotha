@@ -9,8 +9,25 @@ if (!isAdmin()) {
 
 // --- DATA FETCHING FOR DASHBOARD WIDGETS ---
 
-// 1. Total Revenue from completed orders
+// 1. Total Profit from completed orders
+// This calculation assumes you have a 'cost_price' column in your 'products' table.
+// Profit = Total Revenue - Total Cost of Goods Sold (COGS)
+
+// First, get the total revenue from completed orders
 $total_revenue = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE status = 'Completed'")->fetchColumn();
+
+// Second, get the total cost of goods sold (COGS) for those orders
+// CORRECTED a typo here: o.ida -> o.id
+$cogs_query = "SELECT SUM(oi.quantity * p.cost_price)
+               FROM order_items oi
+               JOIN products p ON oi.product_id = p.id
+               JOIN orders o ON oi.order_id = o.id
+               WHERE o.status = 'Completed'";
+$total_cogs = $pdo->query($cogs_query)->fetchColumn();
+
+// Calculate the final profit
+$total_profit = ($total_revenue ?? 0) - ($total_cogs ?? 0);
+
 
 // 2. Total Orders
 $total_orders = $pdo->query("SELECT COUNT(id) FROM orders")->fetchColumn();
@@ -73,9 +90,7 @@ foreach ($sales_data as $data) {
 $chart_values = array_values($sales_map);
 
 ?>
-<!-- Include Chart.js library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Include Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <div class="container-fluid px-4">
@@ -84,15 +99,16 @@ $chart_values = array_values($sales_map);
         <li class="breadcrumb-item active">Overview</li>
     </ol>
 
-    <!-- Stat Cards -->
     <div class="row">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Revenue (Completed)</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= formatPrice($total_revenue ?? 0) ?></div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Profit
+                                (Completed)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= formatPrice($total_profit ?? 0) ?></div>
                         </div>
                         <div class="col-auto">
                             <i class="bi bi-cash-coin fs-2 text-gray-300"></i>
@@ -148,9 +164,7 @@ $chart_values = array_values($sales_map);
         </div>
     </div>
 
-    <!-- Main Content Row -->
     <div class="row">
-        <!-- Sales Chart -->
         <div class="col-xl-8 col-lg-7">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -164,7 +178,6 @@ $chart_values = array_values($sales_map);
             </div>
         </div>
 
-        <!-- Top Selling Products -->
         <div class="col-xl-4 col-lg-5">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -177,10 +190,13 @@ $chart_values = array_values($sales_map);
                         <ul class="list-group list-group-flush">
                             <?php foreach ($top_products as $product): ?>
                                 <li class="list-group-item d-flex align-items-center">
-                                    <img src="assets/uploads/<?= esc_html($product['image']) ?>" alt="<?= esc_html($product['name']) ?>" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <img src="assets/uploads/<?= esc_html($product['image']) ?>"
+                                         alt="<?= esc_html($product['name']) ?>" class="rounded me-3"
+                                         style="width: 50px; height: 50px; object-fit: cover;">
                                     <div>
                                         <h6 class="mb-0"><?= esc_html($product['name']) ?></h6>
-                                        <small class="text-muted"><?= esc_html($product['total_sold']) ?> units sold</small>
+                                        <small class="text-muted"><?= esc_html($product['total_sold']) ?> units
+                                            sold</small>
                                     </div>
                                 </li>
                             <?php endforeach; ?>
@@ -191,7 +207,6 @@ $chart_values = array_values($sales_map);
         </div>
     </div>
 
-    <!-- Recent Orders Table -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Recent Orders</h6>
@@ -240,7 +255,7 @@ $chart_values = array_values($sales_map);
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         // Chart.js Configuration
         const ctx = document.getElementById('salesChart').getContext('2d');
         const salesChart = new Chart(ctx, {
@@ -267,7 +282,7 @@ $chart_values = array_values($sales_map);
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: function(value) {
+                            callback: function (value) {
                                 return '৳' + new Intl.NumberFormat('en-IN').format(value);
                             }
                         }
@@ -279,7 +294,7 @@ $chart_values = array_values($sales_map);
                     },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return `Sales: ${formatPrice(context.parsed.y)}`;
                             }
                         }
@@ -290,19 +305,13 @@ $chart_values = array_values($sales_map);
 
         // Helper function for tooltip formatting
         function formatPrice(price) {
-            return '৳' + new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(price);
+            return '৳ ' + new Intl.NumberFormat('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(price);
         }
     });
 </script>
-
-<!-- Custom CSS for the colored borders -->
-<style>
-    .border-left-primary { border-left: .25rem solid #4e73df !important; }
-    .border-left-success { border-left: .25rem solid #1cc88a !important; }
-    .border-left-info { border-left: .25rem solid #36b9cc !important; }
-    .border-left-warning { border-left: .25rem solid #f6c23e !important; }
-    .text-gray-300 { color: #dddfeb !important; }
-</style>
 
 <?php
 require_once 'includes/footer.php';

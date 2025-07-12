@@ -1,5 +1,5 @@
 <?php
-// This is the customer's order history page, e.g., orders
+// This is the customer's order history page, e.g., orders.php
 
 // STEP 1: Start session and include necessary files FIRST.
 if (session_status() === PHP_SESSION_NONE) {
@@ -10,7 +10,7 @@ require_once 'includes/functions.php';
 
 // STEP 2: Authentication Check. Redirect if not logged in.
 if (!isLoggedIn()) {
-    redirect('login?redirect=orders');
+    redirect('login.php?redirect=orders.php');
 }
 
 $user_id = $_SESSION['user_id'];
@@ -30,8 +30,8 @@ include 'includes/header.php';
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="index">Home</a></li>
-                <li class="breadcrumb-item"><a href="profile">My Account</a></li>
+                <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                <li class="breadcrumb-item"><a href="profile.php">My Account</a></li>
                 <li class="breadcrumb-item active" aria-current="page">My Orders</li>
             </ol>
         </nav>
@@ -48,11 +48,11 @@ include 'includes/header.php';
             <?php if (empty($orders)): ?>
                 <div class="text-center p-4">
                     <p class="text-muted">You have not placed any orders yet.</p>
-                    <a href="index" class="btn btn-primary">Start Shopping</a>
+                    <a href="index.php" class="btn btn-primary">Start Shopping</a>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table id="orders-table" class="table table-hover align-middle">
                         <thead class="table-light">
                         <tr>
                             <th>Order ID</th>
@@ -64,27 +64,41 @@ include 'includes/header.php';
                         </thead>
                         <tbody>
                         <?php foreach ($orders as $order): ?>
-                            <tr>
+                            <tr id="order-row-<?= $order['id'] ?>">
                                 <td class="fw-bold">#<?= esc_html($order['id']) ?></td>
                                 <td><?= format_date($order['created_at']) ?></td>
                                 <td><?= formatPrice($order['total_amount']) ?></td>
                                 <td>
-                                        <span class="badge
-                                            <?php
-                                        switch ($order['status']) {
-                                            case 'Completed': echo 'bg-success'; break;
-                                            case 'Pending': echo 'bg-warning text-dark'; break;
-                                            case 'Cancelled': echo 'bg-danger'; break;
-                                            default: echo 'bg-secondary';
-                                        }
-                                        ?>">
-                                            <?= esc_html($order['status']) ?>
-                                        </span>
+                                    <span class="badge status-badge
+                                        <?php
+                                    switch ($order['status']) {
+                                        case 'Completed':
+                                            echo 'bg-success';
+                                            break;
+                                        case 'Pending':
+                                            echo 'bg-warning text-dark';
+                                            break;
+                                        case 'Cancelled':
+                                            echo 'bg-danger';
+                                            break;
+                                        default:
+                                            echo 'bg-secondary';
+                                    }
+                                    ?>">
+                                        <?= esc_html($order['status']) ?>
+                                    </span>
                                 </td>
-                                <td class="text-end">
-                                    <a href="order-details?id=<?= $order['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-eye-fill me-1"></i>View Details
+                                <td class="text-end action-cell">
+                                    <a href="order-details.php?id=<?= $order['id'] ?>"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye-fill me-1"></i>View
                                     </a>
+                                    <?php if ($order['status'] === 'Pending'): ?>
+                                        <button class="btn btn-sm btn-outline-danger cancel-order-btn"
+                                                data-order-id="<?= $order['id'] ?>">
+                                            <i class="bi bi-x-circle me-1"></i>Cancel
+                                        </button>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -95,5 +109,54 @@ include 'includes/header.php';
         </div>
     </div>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ordersTable = document.getElementById('orders-table');
+
+        if (ordersTable) {
+            ordersTable.addEventListener('click', function (e) {
+                if (e.target.classList.contains('cancel-order-btn')) {
+                    const button = e.target;
+                    const orderId = button.dataset.orderId;
+
+                    if (confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+                        fetch('cancel_order.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: 'order_id=' + encodeURIComponent(orderId)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    // Update the UI without a page reload
+                                    const row = document.getElementById(`order-row-${orderId}`);
+                                    const statusBadge = row.querySelector('.status-badge');
+                                    const actionCell = row.querySelector('.action-cell');
+
+                                    // Update badge
+                                    statusBadge.textContent = 'Cancelled';
+                                    statusBadge.className = 'badge status-badge bg-danger';
+
+                                    // Remove the cancel button
+                                    button.remove();
+
+                                    alert(data.message);
+                                } else {
+                                    alert('Error: ' + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('An unexpected error occurred. Please try again.');
+                            });
+                    }
+                }
+            });
+        }
+    });
+</script>
 
 <?php include 'includes/footer.php'; ?>

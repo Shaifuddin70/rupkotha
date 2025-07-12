@@ -96,7 +96,8 @@ if (!empty($_SESSION['cart'])) {
                         <span class="badge bg-primary rounded-pill"><?= $cart_items_count ?></span>
                     <?php endif; ?>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </div>
@@ -105,7 +106,8 @@ if (!empty($_SESSION['cart'])) {
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <!-- Search Form (centered on desktop, first on mobile) -->
                 <form class="d-flex mx-auto search-form my-3 my-lg-0" role="search" action="search" method="get">
-                    <input class="form-control me-2" type="search" name="q" placeholder="Search for products..." aria-label="Search">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Search for products..."
+                           aria-label="Search">
                     <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
                 </form>
 
@@ -118,12 +120,14 @@ if (!empty($_SESSION['cart'])) {
                         <a class="nav-link" href="all-products">All Products</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
                             Categories
                         </a>
                         <ul class="dropdown-menu">
                             <?php foreach ($categories as $cat): ?>
-                                <li><a class="dropdown-item" href="category?id=<?= $cat['id'] ?>"><?= esc_html($cat['name']) ?></a></li>
+                                <li><a class="dropdown-item"
+                                       href="category?id=<?= $cat['id'] ?>"><?= esc_html($cat['name']) ?></a></li>
                             <?php endforeach; ?>
                         </ul>
                     </li>
@@ -140,13 +144,17 @@ if (!empty($_SESSION['cart'])) {
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center d-none d-lg-flex">
                     <?php if (isLoggedIn()): ?>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle fs-5 me-1"></i> Hello, <?= esc_html($_SESSION['user_name'] ?? 'User') ?>
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                <i class="bi bi-person-circle fs-5 me-1"></i>
+                                Hello, <?= esc_html($_SESSION['user_name'] ?? 'User') ?>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="profile">My Profile</a></li>
                                 <li><a class="dropdown-item" href="orders">My Orders</a></li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li><a class="dropdown-item" href="logout">Logout</a></li>
                             </ul>
                         </li>
@@ -183,12 +191,14 @@ if (!empty($_SESSION['cart'])) {
                 </li>
                 <!-- Categories Dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCategories" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCategories" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
                         Categories
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownCategories">
                         <?php foreach ($categories as $cat): ?>
-                            <li><a class="dropdown-item" href="category?id=<?= $cat['id'] ?>"><?= esc_html($cat['name']) ?></a></li>
+                            <li><a class="dropdown-item"
+                                   href="category?id=<?= $cat['id'] ?>"><?= esc_html($cat['name']) ?></a></li>
                         <?php endforeach; ?>
                     </ul>
                 </li>

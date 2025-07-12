@@ -213,3 +213,43 @@ function handleImageUpload(array $file, ?string $current_image = null): string|f
     $_SESSION['error_message'] = "Failed to move the uploaded file.";
     return false;
 }
+
+function handleAdditionalImages(array $files, int $product_id, PDO $pdo): bool
+{
+    // Check if any files were uploaded
+    if (empty($files['name'][0])) {
+        return true;
+    }
+
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    $upload_dir = __DIR__ . '/../assets/uploads/';
+
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0755, true);
+    }
+
+    foreach ($files['name'] as $key => $name) {
+        if ($files['error'][$key] === UPLOAD_ERR_OK) {
+            $tmp_name = $files['tmp_name'][$key];
+            $file_type = mime_content_type($tmp_name);
+
+            if (in_array($file_type, $allowed_types)) {
+                $extension = pathinfo($name, PATHINFO_EXTENSION);
+                $new_filename = substr(md5(uniqid()), 0, 24) . '.' . $extension;
+                $destination = $upload_dir . $new_filename;
+
+                if (move_uploaded_file($tmp_name, $destination)) {
+                    // Insert into the new product_images table
+                    try {
+                        $stmt = $pdo->prepare("INSERT INTO product_images (product_id, image_path) VALUES (?, ?)");
+                        $stmt->execute([$product_id, $new_filename]);
+                    } catch (PDOException $e) {
+                        // Optional: Log this error instead of halting
+                        error_log("Failed to insert image for product $product_id: " . $e->getMessage());
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}

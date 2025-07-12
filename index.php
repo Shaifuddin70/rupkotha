@@ -34,6 +34,14 @@ $offset = ($page - 1) * $per_page;
 // Get total number of products for pagination calculation
 $total_products = $pdo->query("SELECT COUNT(id) FROM products WHERE is_active = 1")->fetchColumn();
 $total_pages = ceil($total_products / $per_page);
+// 2. Fetch New Arrivals (e.g., the 8 most recent products)
+$new_arrivals_stmt = $pdo->query(
+    "SELECT * FROM products 
+     WHERE is_active = 1 AND deleted_at IS NULL 
+     ORDER BY created_at DESC 
+     LIMIT 8"
+);
+$new_arrivals = $new_arrivals_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch the products for the current page (SELECT * already includes stock)
 $products_stmt = $pdo->prepare(
@@ -52,19 +60,23 @@ $products = $products_stmt->fetchAll(PDO::FETCH_ASSOC);
     <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
             <?php foreach ($hero_products as $index => $item): ?>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index ?>" class="<?= $index === 0 ? 'active' : '' ?>" aria-current="true" aria-label="Slide <?= $index + 1 ?>"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index ?>"
+                        class="<?= $index === 0 ? 'active' : '' ?>" aria-current="true"
+                        aria-label="Slide <?= $index + 1 ?>"></button>
             <?php endforeach; ?>
         </div>
         <div class="carousel-inner">
             <?php foreach ($hero_products as $index => $item): ?>
                 <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                    <div class="hero-slide" style="background-image: url('admin/assets/uploads/<?= esc_html($item['image']) ?>');">
+                    <div class="hero-slide"
+                         style="background-image: url('admin/assets/uploads/<?= esc_html($item['image']) ?>');">
                         <div class="hero-overlay"></div>
                         <div class="container">
                             <div class="carousel-caption text-start">
                                 <h1 class="display-4 fw-bold"><?= esc_html($item['title']) ?></h1>
                                 <p class="lead col-lg-8"><?= esc_html($item['subtitle']) ?></p>
-                                <p><a class="btn btn-lg btn-primary" href="product?id=<?= $item['product_id'] ?>">Shop Now</a></p>
+                                <p><a class="btn btn-lg btn-primary" href="product?id=<?= $item['product_id'] ?>">Shop
+                                        Now</a></p>
                             </div>
                         </div>
                     </div>
@@ -80,15 +92,40 @@ $products = $products_stmt->fetchAll(PDO::FETCH_ASSOC);
             <span class="visually-hidden">Next</span>
         </button>
     </div>
-    <style>
-        .hero-slide { height: 500px; background-size: cover; background-position: center; position: relative; }
-        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); }
-        .carousel-caption { position: absolute; bottom: 5rem; z-index: 10; color: #fff; }
-    </style>
+
 <?php endif; ?>
 
 
 <main class="container my-5">
+    <section class="mb-5">
+        <h2 class="section-title text-center mb-4">New Arrivals</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            <?php foreach ($new_arrivals as $product): ?>
+                <div class="col">
+                    <div class="card h-100 product-card">
+                        <a href="product.php?id=<?= $product['id'] ?>">
+                            <img src="admin/assets/uploads/<?= esc_html($product['image']) ?>"
+                                 class="card-img-top product-card-img-top" alt="<?= esc_html($product['name']) ?>">
+                        </a>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title h6"><a href="product?id=<?= $product['id'] ?>"
+                                                         class="text-dark text-decoration-none"><?= esc_html($product['name']) ?></a>
+                            </h5>
+                            <p class="card-text fw-bold text-primary mb-0"><?= formatPrice($product['price']) ?></p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <?php if ($product['stock'] > 0): ?>
+                                <a href="add_to_cart?id=<?= $product['id'] ?>"
+                                   class="btn btn-outline-primary w-100">Add to Cart</a>
+                            <?php else: ?>
+                                <button class="btn btn-outline-danger w-100" disabled>Out of Stock</button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </section>
     <!-- Top Selling Products Section -->
     <?php if (!empty($top_selling_products)): ?>
         <section class="top-selling mb-5">
@@ -98,15 +135,19 @@ $products = $products_stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="col">
                         <div class="card h-100 product-card">
                             <a href="product?id=<?= $product['id'] ?>">
-                                <img src="admin/assets/uploads/<?= esc_html($product['image']) ?>" class="card-img-top product-card-img-top" alt="<?= esc_html($product['name']) ?>">
+                                <img src="admin/assets/uploads/<?= esc_html($product['image']) ?>"
+                                     class="card-img-top product-card-img-top" alt="<?= esc_html($product['name']) ?>">
                             </a>
                             <div class="card-body d-flex flex-column">
-                                <h5 class="card-title h6"><a href="product?id=<?= $product['id'] ?>" class="text-dark text-decoration-none"><?= esc_html($product['name']) ?></a></h5>
+                                <h5 class="card-title h6"><a href="product?id=<?= $product['id'] ?>"
+                                                             class="text-dark text-decoration-none"><?= esc_html($product['name']) ?></a>
+                                </h5>
                                 <p class="card-text fw-bold text-primary mb-0"><?= formatPrice($product['price']) ?></p>
                             </div>
                             <div class="card-footer bg-transparent border-top-0">
                                 <?php if ($product['stock'] > 0): ?>
-                                    <a href="add_to_cart?id=<?= $product['id'] ?>" class="btn btn-outline-primary w-100">Add to Cart</a>
+                                    <a href="add_to_cart?id=<?= $product['id'] ?>"
+                                       class="btn btn-outline-primary w-100">Add to Cart</a>
                                 <?php else: ?>
                                     <button class="btn btn-outline-danger w-100" disabled>Out of Stock</button>
                                 <?php endif; ?>
@@ -132,15 +173,19 @@ $products = $products_stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="col">
                         <div class="card h-100 product-card">
                             <a href="product?id=<?= $product['id'] ?>">
-                                <img src="admin/assets/uploads/<?= esc_html($product['image']) ?>" class="card-img-top product-card-img-top" alt="<?= esc_html($product['name']) ?>">
+                                <img src="admin/assets/uploads/<?= esc_html($product['image']) ?>"
+                                     class="card-img-top product-card-img-top" alt="<?= esc_html($product['name']) ?>">
                             </a>
                             <div class="card-body d-flex flex-column">
-                                <h5 class="card-title h6"><a href="product?id=<?= $product['id'] ?>" class="text-dark text-decoration-none"><?= esc_html($product['name']) ?></a></h5>
+                                <h5 class="card-title h6"><a href="product?id=<?= $product['id'] ?>"
+                                                             class="text-dark text-decoration-none"><?= esc_html($product['name']) ?></a>
+                                </h5>
                                 <p class="card-text fw-bold text-primary mb-0"><?= formatPrice($product['price']) ?></p>
                             </div>
                             <div class="card-footer bg-transparent border-top-0">
                                 <?php if ($product['stock'] > 0): ?>
-                                    <a href="add_to_cart?id=<?= $product['id'] ?>" class="btn btn-outline-primary w-100">Add to Cart</a>
+                                    <a href="add_to_cart?id=<?= $product['id'] ?>"
+                                       class="btn btn-outline-primary w-100">Add to Cart</a>
                                 <?php else: ?>
                                     <button class="btn btn-outline-danger w-100" disabled>Out of Stock</button>
                                 <?php endif; ?>

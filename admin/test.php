@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 
                 $product_id = $pdo->lastInsertId();
 
+                // Handle the additional images
                 handleAdditionalImages($_FILES['additional_images'], $product_id, $pdo);
 
                 $pdo->commit();
@@ -76,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
             );
             $update_stmt->execute([$name, $price, $cost_price, $category_id, $description, $stock, $image_to_save, $product_id]);
 
+            // Handle any newly uploaded additional images
             handleAdditionalImages($_FILES['additional_images'], $product_id, $pdo);
 
             $pdo->commit();
@@ -175,11 +177,6 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         data-id="<?= htmlspecialchars($prod['id']) ?>">Restore
                                 </button>
                             <?php else: ?>
-                                <button type="button" class="btn btn-sm btn-outline-info manage-images-btn"
-                                        data-bs-toggle="modal" data-bs-target="#manageImagesModal"
-                                        data-id="<?= htmlspecialchars($prod['id']) ?>">
-                                    <i class="bi bi-images">IMAGES</i>
-                                </button>
                                 <button type="button" class="btn btn-sm btn-outline-primary edit-product-btn"
                                         data-bs-toggle="modal" data-bs-target="#editProductModal"
                                         data-id="<?= $prod['id'] ?>"
@@ -189,10 +186,10 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         data-price="<?= $prod['price'] ?>"
                                         data-cost-price="<?= $prod['cost_price'] ?>"
                                         data-stock="<?= $prod['stock'] ?>">
-                                    <i class="bi bi-pencil">UPDATE</i>
+                                    <i class="bi bi-pencil"></i>
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-danger delete-product-btn"
-                                        data-id="<?= htmlspecialchars($prod['id']) ?>"><i class="bi bi-trash">DELETE</i>
+                                        data-id="<?= htmlspecialchars($prod['id']) ?>"><i class="bi bi-trash"></i>
                                 </button>
                             <?php endif; ?>
                         </td>
@@ -358,136 +355,11 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
-<!-- Manage Images Modal -->
-<div class="modal fade" id="manageImagesModal" tabindex="-1" aria-labelledby="manageImagesModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="manageImagesModalLabel">Manage Product Images</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="image-gallery-container" class="row g-3">
-                    <!-- Images will be loaded here via AJAX -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const productsTable = document.getElementById('productsTable');
         const editProductModal = document.getElementById('editProductModal');
-        const manageImagesModalEl = document.getElementById('manageImagesModal');
-
-        // Function to fetch and render images in the manage modal
-        function fetchAndRenderImages(productId) {
-            const imageGalleryContainer = document.getElementById('image-gallery-container');
-            imageGalleryContainer.innerHTML = '<div class="text-center p-5"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
-
-            fetch(`ajax/fetch_product_images.php?id=${productId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        imageGalleryContainer.innerHTML = ''; // Clear spinner
-                        if (data.images.length === 0) {
-                            imageGalleryContainer.innerHTML = '<div class="alert alert-info">No images found for this product.</div>';
-                            return;
-                        }
-                        data.images.forEach(img => {
-                            const col = document.createElement('div');
-                            col.className = 'col-md-4 col-lg-3';
-                            col.id = `image-card-${img.id}`;
-
-                            let badge = img.is_main ? '<span class="badge bg-primary position-absolute top-0 start-0 m-2">Main</span>' : '';
-                            let setMainBtn = !img.is_main ? `<button class="btn btn-sm btn-outline-success set-main-btn" data-image-path="${img.path}">Set as Main</button>` : '';
-                            let deleteBtn = !img.is_main ? `<button class="btn btn-sm btn-outline-danger delete-image-btn" data-image-id="${img.id}">Delete</button>` : '<span class="text-muted small d-block mt-2">Cannot delete main image.</span>';
-
-                            col.innerHTML = `
-                            <div class="card h-100 position-relative">
-                                <img src="assets/uploads/${img.path}" class="card-img-top" style="height: 150px; object-fit: cover;">
-                                ${badge}
-                                <div class="card-body text-center d-flex align-items-center justify-content-center">
-                                    <div class="d-grid gap-2 w-100">
-                                        ${setMainBtn}
-                                        ${deleteBtn}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                            imageGalleryContainer.appendChild(col);
-                        });
-                    } else {
-                        imageGalleryContainer.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    imageGalleryContainer.innerHTML = '<div class="alert alert-danger">Failed to load images.</div>';
-                });
-        }
-
-        if (manageImagesModalEl) {
-            manageImagesModalEl.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const productId = button.dataset.id;
-                this.dataset.productId = productId;
-                fetchAndRenderImages(productId);
-            });
-
-            // Event delegation for delete and set-main buttons
-            document.getElementById('image-gallery-container').addEventListener('click', function (e) {
-                const productId = manageImagesModalEl.dataset.productId;
-
-                // Handle Set as Main
-                if (e.target.classList.contains('set-main-btn')) {
-                    const imagePath = e.target.dataset.imagePath;
-                    if (confirm('Are you sure you want to set this as the main image? The current main image will become an additional image.')) {
-                        fetch('ajax/set_main_image.php', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                            body: `product_id=${productId}&image_path=${imagePath}`
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status === 'success') {
-                                    fetchAndRenderImages(productId); // Refresh the modal content
-                                } else {
-                                    alert(`Error: ${data.message}`);
-                                }
-                            })
-                            .catch(error => console.error('Error:', error));
-                    }
-                }
-
-                // Handle Delete Image
-                if (e.target.classList.contains('delete-image-btn')) {
-                    const imageId = e.target.dataset.imageId;
-                    if (confirm('Are you sure you want to permanently delete this image?')) {
-                        fetch('ajax/delete_product_image.php', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                            body: `image_id=${imageId}`
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status === 'success') {
-                                    document.getElementById(`image-card-${imageId}`).remove();
-                                } else {
-                                    alert(`Error: ${data.message}`);
-                                }
-                            })
-                            .catch(error => console.error('Error:', error));
-                    }
-                }
-            });
-        }
 
         if (editProductModal) {
             editProductModal.addEventListener('show.bs.modal', function (event) {
