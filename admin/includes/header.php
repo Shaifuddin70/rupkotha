@@ -1,5 +1,6 @@
 <?php
 session_start();
+ob_start();
 require_once '../includes/db.php';
 require_once 'includes/auth.php'; // checks if admin is logged in
 ini_set('display_errors', 1);

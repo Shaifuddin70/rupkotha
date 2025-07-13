@@ -81,10 +81,15 @@ function csrf_input(): string
  * Redirects the user to a specified URL and terminates the script.
  * @param string $url The URL to redirect to.
  */
-#[NoReturn] function redirect(string $url): void
+// --- MODIFIED FUNCTION ---
+function redirect($url)
 {
-    header("Location: $url");
-    exit;
+    // If an output buffer is active, clear it before trying to redirect.
+    if (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    header("Location: {$url}");
+    exit();
 }
 
 /**
